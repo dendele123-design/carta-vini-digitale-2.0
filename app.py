@@ -9,6 +9,7 @@ st.set_page_config(page_title="Wine Selector 2.2", page_icon="🍷", layout="cen
 
 st.markdown("""
     <style>
+    /* NASCONDE ELEMENTI DI SISTEMA */
     header {visibility: hidden !important;}
     footer {visibility: hidden !important;}
     #MainMenu {visibility: hidden !important;}
@@ -16,6 +17,8 @@ st.markdown("""
     [data-testid="stHeader"] {background: rgba(0,0,0,0) !important;}
     
     .main { background-color: #fdfaf5; }
+    
+    /* SCHEDA VINO */
     .wine-card {
         text-align: center;
         background-color: white;
@@ -30,14 +33,16 @@ st.markdown("""
     .wine-region-label { color: #b00000; font-weight: bold; font-size: 16px; margin-bottom: 5px; }
     .wine-price { font-size: 22px; color: #444; margin-bottom: 20px; font-weight: bold; }
     
+    /* INFO TECNICHE */
     .tech-info { text-align: left; display: inline-block; max-width: 500px; font-size: 15px; color: #444; }
     .check { color: #b00000; margin-right: 8px; font-weight: bold; }
     
-    .stButton>button { width: 100%; border-radius: 25px; background-color: #800020; color: white; height: 3.5em; font-weight: bold; }
+    /* BOTTONI */
+    .stButton>button { width: 100%; border-radius: 25px; background-color: #800020; color: white; height: 3.5em; font-weight: bold; border: none; }
     .stTabs [data-baseweb="tab-list"] { gap: 8px; }
     .stTabs [data-baseweb="tab"] { background-color: #f1f1f1; border-radius: 10px 10px 0 0; padding: 10px 15px; font-weight: bold; }
     
-    /* Header della Regione nella Carta */
+    /* HEADER REGIONE NELLA CARTA */
     .region-divider {
         background-color: #f4ece2;
         padding: 10px;
@@ -47,12 +52,14 @@ st.markdown("""
         color: #800020;
         text-align: center;
         border-bottom: 2px solid #800020;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
     </style>
     """, unsafe_allow_html=True)
 
 # =================================================================
-# 2. DEFINIZIONE ORDINE GEOGRAFICO (Mappa Regioni)
+# 2. ORDINE GEOGRAFICO E LINK BASE
 # =================================================================
 ORDINE_REGIONI = [
     "Valle d'Aosta", "Piemonte", "Lombardia", "Liguria", "Trentino-Alto Adige", 
@@ -61,21 +68,10 @@ ORDINE_REGIONI = [
     "Campania", "Basilicata", "Puglia", "Calabria", "Sicilia", "Sardegna"
 ]
 
-# =================================================================
-# 3. LINK CATEGORIE
-# =================================================================
 LINK_BASE = "https://www.cartavinidigitale.it/menu-digitale-wineart/"
-CATEGORIE_LINKS = {
-    "Bollicine": f"{LINK_BASE}#1740398853462-a2bc72ab-7b7d",
-    "Champagne": f"{LINK_BASE}#1745914895725-84011f71-5d21",
-    "Vini Bianchi": f"{LINK_BASE}#1745853678461-fb96405a-dddb",
-    "Vini Rosè": f"{LINK_BASE}#1740390912898-ab964a88-abf3",
-    "Vini Rossi": f"{LINK_BASE}#1745654818035-20641e56-b023",
-    "Vini Esteri": f"{LINK_BASE}#1745917570747-12734a65-c3ee"
-}
 
 # =================================================================
-# 4. DATABASE VINI
+# 3. DATABASE VINI
 # =================================================================
 vini = [
     {
@@ -101,6 +97,7 @@ vini = [
     }
 ]
 
+# Funzione per visualizzare la scheda (TASTO ESTERNO RIMOSSO)
 def render_wine_card(v):
     st.markdown(f"""
     <div class="wine-card">
@@ -117,19 +114,19 @@ def render_wine_card(v):
         </div>
     </div>
     """, unsafe_allow_html=True)
-    st.link_button(f"🔎 VEDI TUTTA LA SEZIONE {v['categoria'].upper()}", CATEGORIE_LINKS.get(v['categoria'], LINK_BASE))
     st.write("")
 
 # =================================================================
-# 5. INTERFACCIA
+# 4. INTERFACCIA A SCHEDE
 # =================================================================
 st.title("🍷 Wine Selector 2.2")
 st.link_button("📖 CARTA VINI COMPLETA", LINK_BASE)
 
 tab_sommelier, tab_carta = st.tabs(["🤖 IL TUO SOMMELIER", "📖 SFOGLIA LA CARTA"])
 
-# --- TAB SOMMELIER ---
+# --- TAB 1: SOMMELIER ---
 with tab_sommelier:
+    st.subheader("Lasciati consigliare")
     c1, c2, c3 = st.columns(3)
     with c1: cibo = st.selectbox("Cosa mangi?", ["Scegli...", "Aperitivo", "Pesce", "Carne", "Dessert"])
     with c2: mood = st.selectbox("Atmosfera?", ["Scegli...", "Cena con amici", "Incontro di lavoro", "Occasione Speciale"])
@@ -139,26 +136,31 @@ with tab_sommelier:
         if cibo == "Scegli..." or mood == "Scegli...":
             st.warning("Seleziona almeno cibo e atmosfera!")
         else:
+            with st.spinner("Scegliendo le bottiglie migliori..."):
+                time.sleep(0.8)
             match = [v for v in vini if v["abbinamento"] == cibo and v["mood"] == mood]
             if not match: match = [v for v in vini if v["abbinamento"] == cibo]
             if match:
                 selezione = random.sample(match, min(len(match), 3))
+                st.success(f"Ho selezionato {len(selezione)} proposte per te:")
                 for v in selezione: render_wine_card(v)
+            else:
+                st.error("Nessun vino trovato!")
 
-# --- TAB SFOGLIA LA CARTA ---
+# --- TAB 2: CARTA VINI ---
 with tab_carta:
-    ricerca = st.text_input("🔍 Nome, Uva o Cantina...", "").lower()
-    cat_scelta = st.selectbox("Scegli Categoria", ["Tutte", "Bollicine", "Champagne", "Vini Bianchi", "Vini Rosè", "Vini Rossi", "Vini Esteri"])
-    
-    with st.expander("🛠️ Filtri Avanzati (Regione, Corpo, Budget)"):
+    ricerca = st.text_input("🔍 Cerca per nome, uva o cantina...", "").lower()
+    cat_scelta = st.selectbox("Seleziona Categoria", ["Tutte", "Bollicine", "Champagne", "Vini Bianchi", "Vini Rosè", "Vini Rossi", "Vini Esteri"])
+
+    with st.expander("🛠️ Filtri avanzati (Regione, Corpo, Budget)"):
         f1, f2, f3 = st.columns(3)
         with f1: reg_scelta = st.selectbox("Regione", ["Tutte"] + ORDINE_REGIONI)
-        with f2: str_scelta = st.selectbox("Struttura", ["Tutti", "Leggero", "Di Medio Corpo", "Robusto"])
-        with f3: prezzo_max = st.slider("Budget (€)", 10, 500, 500)
+        with f2: str_scelta = st.selectbox("Corpo", ["Tutti", "Leggero", "Di Medio Corpo", "Robusto"])
+        with f3: prezzo_max = st.slider("Budget Max (€)", 10, 500, 500)
 
     st.write("---")
     
-    # --- LOGICA FILTRI ---
+    # Logica Filtri
     v_fil = vini.copy()
     if cat_scelta != "Tutte": v_fil = [v for v in v_fil if v["categoria"] == cat_scelta]
     if reg_scelta != "Tutte": v_fil = [v for v in v_fil if v["regione"] == reg_scelta]
@@ -166,32 +168,26 @@ with tab_carta:
     v_fil = [v for v in v_fil if v["prezzo"] <= prezzo_max]
     if ricerca: v_fil = [v for v in v_fil if ricerca in v["nome"].lower() or ricerca in v["uve"].lower() or ricerca in v["produttore"].lower()]
 
-    # --- LOGICA DI ORDINAMENTO GEOGRAFICO ---
-    def sort_logic(v):
-        try:
-            # Ritorna l'indice della regione nella lista master
-            return ORDINE_REGIONI.index(v['regione'])
-        except ValueError:
-            # Se è un vino estero o regione non in lista, lo mette in fondo
-            return 999
+    # Logica Ordinamento Geografico
+    def sort_geo(v):
+        try: return ORDINE_REGIONI.index(v['regione'])
+        except ValueError: return 999
+    
+    v_fil.sort(key=sort_geo)
 
-    v_fil.sort(key=sort_logic)
-
-    # --- VISUALIZZAZIONE ---
+    # Visualizzazione con Divisori Regione
     if v_fil:
         current_region = ""
         for v in v_fil:
-            # Se cambiamo regione e siamo in Bianchi/Rossi/Rosè, scriviamo il titolo regione
             if v['categoria'] in ["Vini Bianchi", "Vini Rossi", "Vini Rosè"] and v['regione'] != current_region:
                 current_region = v['regione']
                 st.markdown(f"<div class='region-divider'>📍 {current_region.upper()}</div>", unsafe_allow_html=True)
-            
             render_wine_card(v)
     else:
         st.error("Nessun vino trovato.")
         if st.button("🔄 AZZERA FILTRI"): st.rerun()
 
-# --- FOOTER ---
+# --- 5. FOOTER PERSONALIZZATO ---
 st.divider()
 st.markdown("""
     <div style="text-align: center; color: #888; font-size: 14px;">
