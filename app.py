@@ -73,7 +73,7 @@ vini = [
         "nome": "Petite Arvine", "produttore": "Les Cretes", "regione": "Valle d'Aosta",
         "prezzo": 36, "denominazione": "DOC", "affinamento": "In Acciaio", "uve": "Petite Arvine", "gradazione": "15%",
         "olfatto": "Note di frutta esotica.", "gusto": "Sapido e minerale.",
-        "immagine": "https://www.lescretes.it/wp-content/uploads/2021/04/Petite-Arvine-Les-Cretes.png",
+        "immagine": "https://www.cartavinidigitale.it/wp-content/uploads/2026/01/Les_cretes_petite_arvine_superstart.jpg.jpeg",
         "categoria": "Vini Bianchi", "abbinamento": "Pesce", "mood": "Incontro di lavoro", "struttura": "Leggero",
         "esaurito": False
     },
@@ -86,10 +86,10 @@ vini = [
         "esaurito": False
     },
     {
-        "nome": "Sassicaia", "produttore": "Tenuta San Guido", "regione": "Toscana",
-        "prezzo": 350, "denominazione": "DOC", "affinamento": "24 mesi in Barrique", "uve": "Cabernet Sauvignon", "gradazione": "14%",
-        "olfatto": "Spezie e note tostate.", "gusto": "Maestoso.",
-        "immagine": "https://www.tenutasanguido.com/images/bottiglia_sassicaia.png",
+        "nome": "Etna Rosso “Fragore”", "produttore": "Donnafugata", "regione": "Sicilia",
+        "prezzo": 82, "denominazione": "DOC", "affinamento": "In Inox", "uve": "Etna Rosso", "gradazione": "14%",
+        "olfatto": "Sfumature di grafite, ceneri vulcaniche, piccoli frutti rossi, bacche selvatiche, spezie esotiche, liquirizia ed echi balsamici.", "gusto": "Profondo, ampio, complesso e intenso di piacevole freschezza con accenti tannici e sapido-minerali.",
+        "immagine": "https://www.cartavinidigitale.it/wp-content/uploads/2025/07/Fragore.jpg",
         "categoria": "Vini Rossi", "abbinamento": "Carne", "mood": "Occasione Speciale", "struttura": "Robusto",
         "esaurito": True
     }
