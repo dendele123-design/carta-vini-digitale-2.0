@@ -14,10 +14,8 @@ st.markdown("""
     #MainMenu {visibility: hidden !important;}
     .stAppDeployButton {display:none !important;}
     [data-testid="stHeader"] {background: rgba(0,0,0,0) !important;}
-    
     .main { background-color: #fdfaf5; }
     
-    /* SCHEDA VINO */
     .wine-card {
         text-align: center;
         background-color: white;
@@ -26,13 +24,8 @@ st.markdown("""
         box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         margin-bottom: 20px;
         border: 1px solid #eee;
-        position: relative; /* Per posizionare il bollino esaurito */
     }
-    
-    /* EFFETTO PER VINO ESAURITO */
-    .out-of-stock-card {
-        opacity: 0.6; /* Rende la scheda un po' sbiadita */
-    }
+    .out-of-stock-card { opacity: 0.5; filter: grayscale(1); }
     .out-of-stock-badge {
         background-color: #ff4b4b;
         color: white;
@@ -41,23 +34,17 @@ st.markdown("""
         font-weight: bold;
         display: inline-block;
         margin-bottom: 15px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
         font-size: 14px;
     }
-
     .wine-title { color: #b00000; font-size: 30px; font-weight: bold; margin-bottom: 5px; }
     .wine-producer { font-size: 18px; font-weight: bold; color: #333; }
     .wine-region-label { color: #b00000; font-weight: bold; font-size: 16px; margin-bottom: 5px; }
     .wine-price { font-size: 22px; color: #444; margin-bottom: 20px; font-weight: bold; }
-    
     .tech-info { text-align: left; display: inline-block; max-width: 500px; font-size: 15px; color: #444; }
     .check { color: #b00000; margin-right: 8px; font-weight: bold; }
-    
     .stButton>button { width: 100%; border-radius: 25px; background-color: #800020; color: white; height: 3.5em; font-weight: bold; border: none; }
     .stTabs [data-baseweb="tab-list"] { gap: 8px; }
     .stTabs [data-baseweb="tab"] { background-color: #f1f1f1; border-radius: 10px 10px 0 0; padding: 10px 15px; font-weight: bold; }
-    
     .region-divider {
         background-color: #f4ece2;
         padding: 10px;
@@ -73,7 +60,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # =================================================================
-# 2. ORDINE GEOGRAFICO
+# 2. ORDINE GEOGRAFICO E LINK
 # =================================================================
 ORDINE_REGIONI = [
     "Valle d'Aosta", "Piemonte", "Lombardia", "Liguria", "Trentino-Alto Adige", 
@@ -84,7 +71,7 @@ ORDINE_REGIONI = [
 LINK_BASE = "https://www.cartavinidigitale.it/menu-digitale-wineart/"
 
 # =================================================================
-# 3. DATABASE VINI (Con gestione ESAURITO)
+# 3. DATABASE VINI
 # =================================================================
 vini = [
     {
@@ -93,7 +80,7 @@ vini = [
         "olfatto": "Note di frutta esotica.", "gusto": "Sapido e minerale.",
         "immagine": "https://www.lescretes.it/wp-content/uploads/2021/04/Petite-Arvine-Les-Cretes.png",
         "categoria": "Vini Bianchi", "abbinamento": "Pesce", "mood": "Incontro di lavoro", "struttura": "Leggero",
-        "esaurito": False # Questo vino c'è
+        "esaurito": False
     },
     {
         "nome": "Sassicaia", "produttore": "Tenuta San Guido", "regione": "Toscana",
@@ -101,17 +88,16 @@ vini = [
         "olfatto": "Spezie e note tostate.", "gusto": "Maestoso.",
         "immagine": "https://www.tenutasanguido.com/images/bottiglia_sassicaia.png",
         "categoria": "Vini Rossi", "abbinamento": "Carne", "mood": "Occasione Speciale", "struttura": "Robusto",
-        "esaurito": True # <--- QUESTO VINO APPARIRÀ COME NON DISPONIBILE
+        "esaurito": True
     }
 ]
 
-# FUNZIONE PER MOSTRARE LA SCHEDA
+# --- FUNZIONE RENDER SCHEDA (CORRETTA) ---
 def render_wine_card(v):
-    # Controlliamo se è esaurito per aggiungere le classi CSS
     classe_esaurito = "out-of-stock-card" if v.get("esaurito") else ""
     label_esaurito = '<div class="out-of-stock-badge">❌ MOMENTANEAMENTE ESAURITO</div>' if v.get("esaurito") else ""
 
-    st.markdown(f"""
+    html_code = f"""
     <div class="wine-card {classe_esaurito}">
         {label_esaurito}
         <img src="{v['immagine']}" width="150" style="margin-bottom:15px;">
@@ -126,7 +112,8 @@ def render_wine_card(v):
             <p><span class="check">✔</span> <b>Gusto:</b> {v['gusto']}</p>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """
+    st.markdown(html_code, unsafe_allow_html=True)
     st.write("")
 
 # =================================================================
@@ -137,7 +124,6 @@ st.link_button("📖 CARTA VINI COMPLETA", LINK_BASE)
 
 tab_sommelier, tab_carta = st.tabs(["🤖 IL TUO SOMMELIER", "📖 SFOGLIA LA CARTA"])
 
-# --- TAB 1: SOMMELIER (Escludiamo gli esauriti!) ---
 with tab_sommelier:
     c1, c2, c3 = st.columns(3)
     with c1: cibo = st.selectbox("Cosa mangi?", ["Scegli...", "Aperitivo", "Pesce", "Carne", "Dessert"])
@@ -148,31 +134,23 @@ with tab_sommelier:
         if cibo == "Scegli..." or mood == "Scegli...":
             st.warning("Seleziona almeno cibo e atmosfera!")
         else:
-            # Filtro: cerchiamo solo vini DISPONIBILI (esaurito == False)
             match = [v for v in vini if v["abbinamento"] == cibo and v["mood"] == mood and not v.get("esaurito")]
             if not match: match = [v for v in vini if v["abbinamento"] == cibo and not v.get("esaurito")]
-            
             if match:
                 selezione = random.sample(match, min(len(match), 3))
-                st.success(f"Ecco le migliori proposte disponibili:")
                 for v in selezione: render_wine_card(v)
             else:
-                st.error("Nessun vino disponibile per questa scelta.")
+                st.error("Nessun vino disponibile.")
 
-# --- TAB 2: CARTA VINI (Qui mostriamo anche gli esauriti) ---
 with tab_carta:
     ricerca = st.text_input("🔍 Cerca per nome, uva o cantina...", "").lower()
     cat_scelta = st.selectbox("Seleziona Categoria", ["Tutte", "Bollicine", "Champagne", "Vini Bianchi", "Vini Rosè", "Vini Rossi", "Vini Esteri"])
-
     with st.expander("🛠️ Filtri avanzati"):
         f1, f2, f3 = st.columns(3)
         with f1: reg_scelta = st.selectbox("Regione", ["Tutte"] + ORDINE_REGIONI)
         with f2: str_scelta = st.selectbox("Corpo", ["Tutti", "Leggero", "Di Medio Corpo", "Robusto"])
         with f3: prezzo_max = st.slider("Budget Max (€)", 10, 500, 500)
 
-    st.write("---")
-    
-    # Logica Filtri
     v_fil = vini.copy()
     if cat_scelta != "Tutte": v_fil = [v for v in v_fil if v["categoria"] == cat_scelta]
     if reg_scelta != "Tutte": v_fil = [v for v in v_fil if v["regione"] == reg_scelta]
@@ -186,17 +164,17 @@ with tab_carta:
     v_fil.sort(key=sort_geo)
 
     if v_fil:
-        current_region = ""
+        curr_reg = ""
         for v in v_fil:
-            if v['categoria'] in ["Vini Bianchi", "Vini Rossi", "Vini Rosè"] and v['regione'] != current_region:
-                current_region = v['regione']
-                st.markdown(f"<div class='region-divider'>📍 {current_region.upper()}</div>", unsafe_allow_html=True)
+            if v['categoria'] in ["Vini Bianchi", "Vini Rossi", "Vini Rosè"] and v['regione'] != curr_reg:
+                curr_reg = v['regione']
+                st.markdown(f"<div class='region-divider'>📍 {curr_reg.upper()}</div>", unsafe_allow_html=True)
             render_wine_card(v)
     else:
         st.error("Nessun vino trovato.")
         if st.button("🔄 AZZERA FILTRI"): st.rerun()
 
-# --- 5. FOOTER ---
+# --- FOOTER ---
 st.divider()
 st.markdown("""
     <div style="text-align: center; color: #888; font-size: 14px;">
