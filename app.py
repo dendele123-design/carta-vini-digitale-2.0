@@ -51,7 +51,6 @@ st.markdown("""
 # 2. LINK CATEGORIE (Ancore WordPress)
 # =================================================================
 LINK_BASE = "https://www.cartavinidigitale.it/menu-digitale-wineart/"
-# Sostituisci questi ID con quelli reali delle tue schede
 LINK_BOLLICINE = f"{LINK_BASE}#1740398853462-a2bc72ab-7b7d"
 LINK_CHAMPAGNE = f"{LINK_BASE}#1745914895725-84011f71-5d21"
 LINK_BIANCHI = f"{LINK_BASE}#1745853678461-fb96405a-dddb"
@@ -60,7 +59,7 @@ LINK_ROSSI = f"{LINK_BASE}#1745654818035-20641e56-b023"
 LINK_ESTERI = f"{LINK_BASE}#1745917570747-12734a65-c3ee"
 
 # =================================================================
-# 3. DATABASE VINI (Aggiungine quanti ne vuoi qui)
+# 3. DATABASE VINI
 # =================================================================
 vini = [
     {
@@ -88,7 +87,6 @@ vini = [
     }
 ]
 
-# Funzione per visualizzare la scheda
 def render_wine_card(v):
     st.markdown(f"""
     <div class="wine-card">
@@ -136,12 +134,11 @@ with tab_sommelier:
             else:
                 st.error("Nessun vino trovato!")
 
-# --- TAB 2: SFOGLIA LA CARTA (Versione Salva-Spazio) ---
+# --- TAB 2: SFOGLIA LA CARTA ---
 with tab_carta:
     ricerca = st.text_input("🔍 Cerca per nome, uva o cantina...", "").lower()
     cat_scelta = st.selectbox("Seleziona Categoria", ["Tutte", "Bollicine", "Champagne", "Vini Bianchi", "Vini Rosè", "Vini Rossi", "Vini Esteri"])
 
-    # IL CASSETTO DEI FILTRI (Nasconde Corpo e Budget per far spazio ai vini)
     with st.expander("🛠️ Filtri avanzati (Corpo e Budget)"):
         f1, f2 = st.columns(2)
         with f1: str_scelta = st.selectbox("Struttura", ["Tutti", "Leggero", "Di Medio Corpo", "Robusto"])
@@ -149,7 +146,6 @@ with tab_carta:
 
     st.write("---")
     
-    # Logica Filtri
     v_fil = vini.copy()
     if cat_scelta != "Tutte": v_fil = [v for v in v_fil if v["categoria"] == cat_scelta]
     if str_scelta != "Tutti": v_fil = [v for v in v_fil if v["struttura"] == str_scelta]
@@ -160,7 +156,10 @@ with tab_carta:
         st.caption(f"Visualizzando {len(v_fil)} etichette")
         for v in v_fil: render_wine_card(v)
     else:
-        st.info("Nessun vino trovato. Prova a resettare i filtri!")
+        st.error("Nessun vino trovato con questi filtri.")
+        # IL TASTO MAGICO DI RESET
+        if st.button("🔄 AZZERA TUTTI I FILTRI"):
+            st.rerun()
 
 # --- 5. FOOTER ---
 st.divider()
