@@ -157,4 +157,12 @@ with tab_carta:
 
 # Footer
 st.divider()
-st.caption("Wine Selector 2.0 • Powered by WineArt & Streamlit")
+# --- FOOTER PERSONALIZZATO ---
+st.divider()
+st.markdown("""
+    <div style="text-align: center; color: #888; font-size: 14px;">
+        Wine Selector 2.0 • Powered by 
+        <a href="https://www.superstart.it" style="color: #b00000; text-decoration: none; font-weight: bold;">SuPeR</a> 
+        & Streamlit
+    </div>
+    """, unsafe_allow_html=True)
