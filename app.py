@@ -2,13 +2,13 @@ import streamlit as st
 import time
 import random
 
-# --- 1. CONFIGURAZIONE ---
-st.set_page_config(page_title="Wine Selector 2.0", page_icon="🍷", layout="centered")
+# =================================================================
+# 1. CONFIGURAZIONE E DESIGN
+# =================================================================
+st.set_page_config(page_title="Wine Selector 2.1", page_icon="🍷", layout="centered")
 
-# --- 2. CSS AVANZATO (Nasconde Fork, Header e crea lo stile della scheda) ---
 st.markdown("""
     <style>
-    /* NASCONDE HEADER, MENU E ICONA GITHUB/FORK */
     header {visibility: hidden !important;}
     footer {visibility: hidden !important;}
     #MainMenu {visibility: hidden !important;}
@@ -19,7 +19,6 @@ st.markdown("""
     
     .main { background-color: #fdfaf5; }
     
-    /* Contenitore della scheda vino */
     .wine-card {
         text-align: center;
         background-color: white;
@@ -51,44 +50,40 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. DATABASE VINI (Esempio) ---
+# =================================================================
+# 2. DATABASE VINI (Esempio)
+# =================================================================
 vini = [
     {
-        "nome": "Petite Arvine",
-        "produttore": "Les Cretes",
-        "regione": "Valle d'Aosta",
-        "prezzo": "36 €",
-        "denominazione": "DOC",
-        "affinamento": "In Acciaio",
-        "uve": "Petite Arvine",
-        "gradazione": "15%",
-        "olfatto": "Note di frutta esotica, agrumi, bacche di ginepro, biancospino, glicine e gelsomino.",
-        "gusto": "Sapido e fresco grazie alla sua buona acidità, minerale e bilanciato.",
+        "nome": "Petite Arvine", "produttore": "Les Cretes", "regione": "Valle d'Aosta",
+        "prezzo": 36, # Usiamo numeri per poter filtrare per prezzo
+        "denominazione": "DOC", "affinamento": "In Acciaio", "uve": "Petite Arvine", "gradazione": "15%",
+        "olfatto": "Note di frutta esotica, agrumi, bacche di ginepro.",
+        "gusto": "Sapido e fresco, minerale e bilanciato.",
         "immagine": "https://www.lescretes.it/wp-content/uploads/2021/04/Petite-Arvine-Les-Cretes.png",
-        "categoria": "Vini Bianchi",
-        "abbinamento": "Pesce",
-        "mood": "Incontro di lavoro",
-        "struttura": "Leggero"
+        "categoria": "Vini Bianchi", "abbinamento": "Pesce", "mood": "Incontro di lavoro", "struttura": "Leggero"
     },
     {
-        "nome": "Champagne Vintage 2013",
-        "produttore": "Dom Pérignon",
-        "regione": "Épernay - Francia",
-        "prezzo": "280 €",
-        "denominazione": "AOC",
-        "affinamento": "Oltre 96 mesi sui lieviti",
-        "uve": "Chardonnay, Pinot Noir",
-        "gradazione": "12.5%",
+        "nome": "Sassicaia", "produttore": "Tenuta San Guido", "regione": "Toscana",
+        "prezzo": 350,
+        "denominazione": "DOC", "affinamento": "24 mesi in Barrique", "uve": "Cabernet Sauvignon, Cabernet Franc", "gradazione": "14%",
+        "olfatto": "Frutti rossi, spezie, tabacco e note tostate.",
+        "gusto": "Maestoso, con tannini setosi e infinita persistenza.",
+        "immagine": "https://www.tenutasanguido.com/images/bottiglia_sassicaia.png", # Esempio
+        "categoria": "Vini Rossi", "abbinamento": "Carne", "mood": "Occasione Speciale", "struttura": "Robusto"
+    },
+     {
+        "nome": "Champagne Vintage 2013", "produttore": "Dom Pérignon", "regione": "Francia",
+        "prezzo": 280,
+        "denominazione": "AOC", "affinamento": "Oltre 96 mesi sui lieviti", "uve": "Chardonnay, Pinot Noir", "gradazione": "12.5%",
         "olfatto": "Note floreali, polvere di cacao e sentori tostati.",
         "gusto": "Preciso, elegante, con una mineralità salina iconica.",
         "immagine": "https://media-verticomm.freetls.fastly.net/product-images/120286-champagne-dom-perignon-vintage-2013-box.png",
-        "categoria": "Champagne",
-        "abbinamento": "Pesce",
-        "mood": "Occasione Speciale",
-        "struttura": "Robusto"
+        "categoria": "Champagne", "abbinamento": "Pesce", "mood": "Occasione Speciale", "struttura": "Robusto"
     }
 ]
 
+# Funzione per stampare la scheda vino
 def render_wine_card(v):
     st.markdown(f"""
     <div class="wine-card">
@@ -96,7 +91,7 @@ def render_wine_card(v):
         <div class="wine-title">{v['nome']}</div>
         <div class="wine-producer">{v['produttore']}</div>
         <div class="wine-region">{v['regione']}</div>
-        <div class="wine-price">{v['prezzo']}</div>
+        <div class="wine-price">€ {v['prezzo']}</div>
         <div class="tech-info">
             <p><span class="check">✔</span> <b>Denominazione:</b> {v['denominazione']}</p>
             <p><span class="check">✔</span> <b>Affinamento:</b> {v['affinamento']}</p>
@@ -108,12 +103,15 @@ def render_wine_card(v):
     </div>
     """, unsafe_allow_html=True)
 
-# --- 4. INTERFACCIA ---
-st.title("🍷 Wine Selector 2.0")
+# =================================================================
+# 3. INTERFACCIA PRINCIPALE
+# =================================================================
+st.title("🍷 Wine Selector 2.1")
 st.write("L'eccellenza della nostra cantina a portata di click.")
 
 tab_sommelier, tab_carta = st.tabs(["🤖 IL TUO SOMMELIER", "📖 SFOGLIA LA CARTA"])
 
+# --- TAB 1: IL SOMMELIER (Max 3 Risultati Random) ---
 with tab_sommelier:
     st.subheader("Lasciati consigliare")
     c1, c2, c3 = st.columns(3)
@@ -127,27 +125,58 @@ with tab_sommelier:
         else:
             match = [v for v in vini if v["abbinamento"] == cibo and v["mood"] == mood]
             if not match: match = [v for v in vini if v["abbinamento"] == cibo]
+            
             if match:
-                st.success(f"Ho selezionato {len(match)} bottiglie perfette:")
-                for v in match: render_wine_card(v)
+                # Logica Random (Max 3)
+                selezione = random.sample(match, min(len(match), 3))
+                st.success(f"Ho selezionato {len(selezione)} proposte perfette per te:")
+                for v in selezione: render_wine_card(v)
             else:
                 st.error("Nessun vino trovato!")
 
+# --- TAB 2: LA CARTA VINI (Con Ricerca e Filtri) ---
 with tab_carta:
-    categorie = ["Bollicine", "Champagne", "Vini Bianchi", "Vini Rossi", "Vini Esteri"]
-    scelta_cat = st.selectbox("Seleziona una categoria:", categorie)
-    st.divider()
-    vini_categoria = [v for v in vini if v["categoria"] == scelta_cat]
-    if vini_categoria:
-        for v in vini_categoria: render_wine_card(v)
-    else:
-        st.info(f"Stiamo aggiornando la selezione.")
+    # 1. Barra di Ricerca Universale
+    ricerca = st.text_input("🔍 Cerca per nome, uva o produttore...", "").lower()
+    
+    # 2. Mini-Filtri Rapidi
+    f1, f2, f3 = st.columns(3)
+    with f1: cat_scelta = st.selectbox("Categoria", ["Tutte", "Bollicine", "Champagne", "Vini Bianchi", "Vini Rossi", "Vini Esteri"])
+    with f2: str_scelta = st.selectbox("Corpo", ["Tutti", "Leggero", "Di Medio Corpo", "Robusto"])
+    with f3: prezzo_max = st.slider("Budget Max (€)", 10, 500, 500)
 
-# --- 5. FOOTER PERSONALIZZATO ---
+    st.divider()
+    
+    # LOGICA DI FILTRO COMPLESSA
+    vini_filtrati = vini.copy()
+    
+    # Filtro Categoria
+    if cat_scelta != "Tutte":
+        vini_filtrati = [v for v in vini_filtrati if v["categoria"] == cat_scelta]
+    
+    # Filtro Struttura
+    if str_scelta != "Tutti":
+        vini_filtrati = [v for v in vini_filtrati if v["struttura"] == str_scelta]
+        
+    # Filtro Prezzo
+    vini_filtrati = [v for v in vini_filtrati if v["prezzo"] <= prezzo_max]
+    
+    # Filtro Testuale (Ricerca)
+    if ricerca:
+        vini_filtrati = [v for v in vini_filtrati if ricerca in v["nome"].lower() or ricerca in v["uve"].lower() or ricerca in v["produttore"].lower()]
+
+    # Mostriamo i risultati
+    if vini_filtrati:
+        st.write(f"Visualizzando **{len(vini_filtrati)}** etichette:")
+        for v in vini_filtrati: render_wine_card(v)
+    else:
+        st.info("Nessun vino corrisponde alla tua ricerca. Prova a resettare i filtri!")
+
+# --- 4. FOOTER ---
 st.divider()
 st.markdown("""
     <div style="text-align: center; color: #888; font-size: 14px;">
-        Wine Selector 2.0 • Powered by 
+        Wine Selector 2.1 • Powered by 
         <a href="https://www.superstart.it" target="_blank" style="color: #b00000; text-decoration: none; font-weight: bold;">SuPeR</a> 
         & Streamlit
     </div>
