@@ -77,6 +77,14 @@ vini = [
         "categoria": "Vini Bianchi", "abbinamento": "Pesce", "mood": "Incontro di lavoro", "struttura": "Leggero",
         "esaurito": False
     },
+        {
+        "nome": "Athena", "produttore": "Il Vino e le Rose", "regione": "Piemonte",
+        "prezzo": 34, "denominazione": "DOC", "affinamento": "In Acciaio", "uve": "70% Cortese 30% Timorasso ", "gradazione": "12,5%",
+        "olfatto": "Note di frutta esotica, agrumi, bacche di ginepro, biancospino, glicine e gelsomino. ", "gusto": "Sapido e fresco grazie alla sua buona acidità, contenuto alcolico medio e struttura piuttosto marcata. Minerale e bilanciato. ",
+        "immagine": "https://www.cartavinidigitale.it/wp-content/uploads/2025/07/Athena_cortese_timorasso_il_vino_e_le_rose_superstart.jpg",
+        "categoria": "Vini Bianchi", "abbinamento": "Pesce", "mood": "Incontro di lavoro", "struttura": "Leggero",
+        "esaurito": False
+    },
     {
         "nome": "Sassicaia", "produttore": "Tenuta San Guido", "regione": "Toscana",
         "prezzo": 350, "denominazione": "DOC", "affinamento": "24 mesi in Barrique", "uve": "Cabernet Sauvignon", "gradazione": "14%",
