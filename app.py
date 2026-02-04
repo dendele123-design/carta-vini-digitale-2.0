@@ -3,31 +3,57 @@ import time
 import random
 
 # =================================================================
-# 1. CONFIGURAZIONE E DESIGN
+# 1. CONFIGURAZIONE E DESIGN (WineArt Identity)
 # =================================================================
 st.set_page_config(page_title="Wine Selector 2.3", page_icon="🍷", layout="centered")
 
 st.markdown("""
 <style>
+/* FORZA IL COLORE DEL TESTO PER EVITARE PROBLEMI CON DARK MODE */
+html, body, [class*="css"], .stMarkdown, p, label {
+    color: #1a1a1a !important; /* Grigio quasi nero per massima leggibilità */
+}
+
+/* NASCONDE ELEMENTI DI SISTEMA */
 header {visibility: hidden !important;}
 footer {visibility: hidden !important;}
 #MainMenu {visibility: hidden !important;}
 .stAppDeployButton {display:none !important;}
 [data-testid="stHeader"] {background: rgba(0,0,0,0) !important;}
-.main { background-color: #fdfaf5; }
 
+/* SFONDO GENERALE FORZATO CHIARO */
+.stApp {
+    background-color: #fdfaf5 !important;
+}
+
+/* STILE LINGUETTE (TABS) - Forza colori visibili */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px;
+}
+.stTabs [data-baseweb="tab"] {
+    background-color: #e0e0e0 !important; /* Sfondo grigio chiaro */
+    border-radius: 10px 10px 0 0;
+    padding: 10px 15px;
+    color: #555 !important; /* Colore testo tab non attivo */
+}
+.stTabs [data-baseweb="tab"][aria-selected="true"] {
+    background-color: #800020 !important; /* Rosso WineArt per il tab attivo */
+    color: white !important; /* Testo bianco per il tab attivo */
+}
+
+/* SCHEDA VINO */
 .wine-card {
     text-align: center;
-    background-color: white;
+    background-color: white !important;
     padding: 30px;
     border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     margin-bottom: 20px;
     border: 1px solid #eee;
 }
 .out-of-stock-card { opacity: 0.4; filter: grayscale(100%); }
 .out-of-stock-badge {
-    background-color: #ff4b4b;
+    background-color: #ff4b4b !important;
     color: white !important;
     padding: 5px 15px;
     border-radius: 10px;
@@ -36,22 +62,34 @@ footer {visibility: hidden !important;}
     margin-bottom: 15px;
     font-size: 14px;
 }
-.wine-title { color: #b00000; font-size: 30px; font-weight: bold; margin-bottom: 5px; }
-.wine-producer { font-size: 18px; font-weight: bold; color: #333; }
-.wine-region-label { color: #b00000; font-weight: bold; font-size: 16px; margin-bottom: 5px; }
-.wine-price { font-size: 22px; color: #444; margin-bottom: 20px; font-weight: bold; }
-.tech-info { text-align: left; display: inline-block; max-width: 500px; font-size: 15px; color: #444; }
-.check { color: #b00000; margin-right: 8px; font-weight: bold; }
-.stButton>button { width: 100%; border-radius: 25px; background-color: #800020; color: white; height: 3.5em; font-weight: bold; border: none; }
-.stTabs [data-baseweb="tab-list"] { gap: 8px; }
-.stTabs [data-baseweb="tab"] { background-color: #f1f1f1; border-radius: 10px 10px 0 0; padding: 10px 15px; font-weight: bold; }
+
+.wine-title { color: #b00000 !important; font-size: 30px; font-weight: bold; margin-bottom: 5px; }
+.wine-producer { font-size: 18px; font-weight: bold; color: #333 !important; }
+.wine-region-label { color: #b00000 !important; font-weight: bold; font-size: 16px; margin-bottom: 5px; }
+.wine-price { font-size: 22px; color: #444 !important; margin-bottom: 20px; font-weight: bold; }
+
+/* INFO TECNICHE */
+.tech-info { text-align: left; display: inline-block; max-width: 500px; font-size: 15px; color: #444 !important; }
+.check { color: #b00000 !important; margin-right: 8px; font-weight: bold; }
+
+/* BOTTONI */
+.stButton>button { 
+    width: 100%; 
+    border-radius: 25px; 
+    background-color: #800020 !important; 
+    color: white !important; 
+    height: 3.5em; 
+    font-weight: bold; 
+    border: none; 
+}
+
 .region-divider {
-    background-color: #f4ece2;
+    background-color: #f4ece2 !important;
     padding: 10px;
     border-radius: 10px;
     margin: 20px 0;
     font-weight: bold;
-    color: #800020;
+    color: #800020 !important;
     text-align: center;
     border-bottom: 2px solid #800020;
     text-transform: uppercase;
@@ -60,10 +98,9 @@ footer {visibility: hidden !important;}
 """, unsafe_allow_html=True)
 
 # =================================================================
-# 2. ORDINE E LINK
+# 2. ORDINE E REGOLAZIONI
 # =================================================================
 ORDINE_REGIONI = ["Valle d'Aosta", "Piemonte", "Lombardia", "Liguria", "Trentino-Alto Adige", "Veneto", "Friuli-Venezia Giulia", "Emilia-Romagna", "Toscana", "Umbria", "Marche", "Lazio", "Abruzzo", "Molise", "Campania", "Basilicata", "Puglia", "Calabria", "Sicilia", "Sardegna"]
-LINK_BASE = "https://www.cartavinidigitale.it/menu-digitale-wineart/"
 
 # =================================================================
 # 3. DATABASE VINI
@@ -77,10 +114,10 @@ vini = [
         "categoria": "Vini Bianchi", "abbinamento": "Pesce", "mood": "Incontro di lavoro", "struttura": "Leggero",
         "esaurito": False
     },
-        {
+    {
         "nome": "Athena", "produttore": "Il Vino e le Rose", "regione": "Piemonte",
         "prezzo": 34, "denominazione": "DOC", "affinamento": "In Acciaio", "uve": "70% Cortese 30% Timorasso ", "gradazione": "12,5%",
-        "olfatto": "Note di frutta esotica, agrumi, bacche di ginepro, biancospino, glicine e gelsomino. ", "gusto": "Sapido e fresco grazie alla sua buona acidità, contenuto alcolico medio e struttura piuttosto marcata. Minerale e bilanciato. ",
+        "olfatto": "Note di frutta esotica, agrumi, bacche di ginepro, biancospino, glicine e gelsomino. ", "gusto": "Sapido e fresco grazie alla sua buona acidità.",
         "immagine": "https://www.cartavinidigitale.it/wp-content/uploads/2025/07/Athena_cortese_timorasso_il_vino_e_le_rose_superstart.jpg",
         "categoria": "Vini Bianchi", "abbinamento": "Pesce", "mood": "Incontro di lavoro", "struttura": "Leggero",
         "esaurito": False
@@ -88,19 +125,17 @@ vini = [
     {
         "nome": "Etna Rosso “Fragore”", "produttore": "Donnafugata", "regione": "Sicilia",
         "prezzo": 82, "denominazione": "DOC", "affinamento": "In Inox", "uve": "Etna Rosso", "gradazione": "14%",
-        "olfatto": "Sfumature di grafite, ceneri vulcaniche, piccoli frutti rossi, bacche selvatiche, spezie esotiche, liquirizia ed echi balsamici.", "gusto": "Profondo, ampio, complesso e intenso di piacevole freschezza con accenti tannici e sapido-minerali.",
+        "olfatto": "Sfumature di grafite e bacche selvatiche.", "gusto": "Profondo e sapido-minerale.",
         "immagine": "https://www.cartavinidigitale.it/wp-content/uploads/2025/07/Fragore.jpg",
         "categoria": "Vini Rossi", "abbinamento": "Carne", "mood": "Occasione Speciale", "struttura": "Robusto",
         "esaurito": True
     }
 ]
 
-# --- FUNZIONE RENDER SCHEDA (FLUSH LEFT - NON TOCCARE I RIENTRI!) ---
 def render_wine_card(v):
     classe_esaurito = "out-of-stock-card" if v.get("esaurito") else ""
     label_esaurito = '<div class="out-of-stock-badge">❌ MOMENTANEAMENTE ESAURITO</div>' if v.get("esaurito") else ""
 
-    # NOTA: Queste righe devono stare all'inizio della riga (senza spazi davanti)
     html_code = f"""<div class="wine-card {classe_esaurito}">
 {label_esaurito}
 <img src="{v['immagine']}" width="150" style="margin-bottom:15px;">
@@ -121,7 +156,6 @@ def render_wine_card(v):
 # 4. INTERFACCIA
 # =================================================================
 st.title("🍷 Wine Selector 2.3")
-st.link_button("📖 CARTA VINI COMPLETA", LINK_BASE)
 
 tab_sommelier, tab_carta = st.tabs(["🤖 IL TUO SOMMELIER", "📖 SFOGLIA LA CARTA"])
 
@@ -179,9 +213,9 @@ with tab_carta:
 # --- FOOTER ---
 st.divider()
 st.markdown("""
-<div style="text-align: center; color: #888; font-size: 14px;">
+<div style="text-align: center; color: #888 !important; font-size: 14px;">
 Wine Selector 2.3 • Powered by 
-<a href="https://www.superstart.it" target="_blank" style="color: #b00000; text-decoration: none; font-weight: bold;">SuPeR</a> 
+<a href="https://www.superstart.it" target="_blank" style="color: #b00000 !important; text-decoration: none; font-weight: bold;">SuPeR</a> 
 & Streamlit
 </div>
 """, unsafe_allow_html=True)
