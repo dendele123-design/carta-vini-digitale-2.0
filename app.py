@@ -7,42 +7,44 @@ import random
 # =================================================================
 st.set_page_config(page_title="Wine Selector 2.3", page_icon="🍷", layout="centered")
 
-st.markdown("""
+ROSSO_BRAND = "#DC0612"
+
+st.markdown(f"""
 <style>
 /* FORZA IL COLORE DEL TESTO PER EVITARE PROBLEMI CON DARK MODE */
-html, body, [class*="css"], .stMarkdown, p, label {
-    color: #1a1a1a !important; /* Grigio quasi nero per massima leggibilità */
-}
+html, body, [class*="css"], .stMarkdown, p, label {{
+    color: #1a1a1a !important;
+}}
 
 /* NASCONDE ELEMENTI DI SISTEMA */
-header {visibility: hidden !important;}
-footer {visibility: hidden !important;}
-#MainMenu {visibility: hidden !important;}
-.stAppDeployButton {display:none !important;}
-[data-testid="stHeader"] {background: rgba(0,0,0,0) !important;}
+header {{visibility: hidden !important;}}
+footer {{visibility: hidden !important;}}
+#MainMenu {{visibility: hidden !important;}}
+.stAppDeployButton {{display:none !important;}}
+[data-testid="stHeader"] {{background: rgba(0,0,0,0) !important;}}
 
 /* SFONDO GENERALE FORZATO CHIARO */
-.stApp {
+.stApp {{
     background-color: #fdfaf5 !important;
-}
+}}
 
-/* STILE LINGUETTE (TABS) - Forza colori visibili */
-.stTabs [data-baseweb="tab-list"] {
+/* STILE LINGUETTE (TABS) */
+.stTabs [data-baseweb="tab-list"] {{
     gap: 8px;
-}
-.stTabs [data-baseweb="tab"] {
-    background-color: #e0e0e0 !important; /* Sfondo grigio chiaro */
+}}
+.stTabs [data-baseweb="tab"] {{
+    background-color: #e0e0e0 !important;
     border-radius: 10px 10px 0 0;
     padding: 10px 15px;
-    color: #555 !important; /* Colore testo tab non attivo */
-}
-.stTabs [data-baseweb="tab"][aria-selected="true"] {
-    background-color: #800020 !important; /* Rosso WineArt per il tab attivo */
-    color: white !important; /* Testo bianco per il tab attivo */
-}
+    color: #555 !important;
+}}
+.stTabs [data-baseweb="tab"][aria-selected="true"] {{
+    background-color: #800020 !important;
+    color: white !important;
+}}
 
 /* SCHEDA VINO */
-.wine-card {
+.wine-card {{
     text-align: center;
     background-color: white !important;
     padding: 30px;
@@ -50,9 +52,9 @@ footer {visibility: hidden !important;}
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     margin-bottom: 20px;
     border: 1px solid #eee;
-}
-.out-of-stock-card { opacity: 0.4; filter: grayscale(100%); }
-.out-of-stock-badge {
+}}
+.out-of-stock-card {{ opacity: 0.4; filter: grayscale(100%); }}
+.out-of-stock-badge {{
     background-color: #ff4b4b !important;
     color: white !important;
     padding: 5px 15px;
@@ -61,19 +63,19 @@ footer {visibility: hidden !important;}
     display: inline-block;
     margin-bottom: 15px;
     font-size: 14px;
-}
+}}
 
-.wine-title { color: #b00000 !important; font-size: 30px; font-weight: bold; margin-bottom: 5px; }
-.wine-producer { font-size: 18px; font-weight: bold; color: #333 !important; }
-.wine-region-label { color: #b00000 !important; font-weight: bold; font-size: 16px; margin-bottom: 5px; }
-.wine-price { font-size: 22px; color: #444 !important; margin-bottom: 20px; font-weight: bold; }
+.wine-title {{ color: #b00000 !important; font-size: 30px; font-weight: bold; margin-bottom: 5px; }}
+.wine-producer {{ font-size: 18px; font-weight: bold; color: #333 !important; }}
+.wine-region-label {{ color: #b00000 !important; font-weight: bold; font-size: 16px; margin-bottom: 5px; }}
+.wine-price {{ font-size: 22px; color: #444 !important; margin-bottom: 20px; font-weight: bold; }}
 
 /* INFO TECNICHE */
-.tech-info { text-align: left; display: inline-block; max-width: 500px; font-size: 15px; color: #444 !important; }
-.check { color: #b00000 !important; margin-right: 8px; font-weight: bold; }
+.tech-info {{ text-align: left; display: inline-block; max-width: 500px; font-size: 15px; color: #444 !important; }}
+.check {{ color: #b00000 !important; margin-right: 8px; font-weight: bold; }}
 
 /* BOTTONI */
-.stButton>button { 
+.stButton>button {{ 
     width: 100%; 
     border-radius: 25px; 
     background-color: #800020 !important; 
@@ -81,9 +83,9 @@ footer {visibility: hidden !important;}
     height: 3.5em; 
     font-weight: bold; 
     border: none; 
-}
+}}
 
-.region-divider {
+.region-divider {{
     background-color: #f4ece2 !important;
     padding: 10px;
     border-radius: 10px;
@@ -93,7 +95,7 @@ footer {visibility: hidden !important;}
     text-align: center;
     border-bottom: 2px solid #800020;
     text-transform: uppercase;
-}
+}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -132,6 +134,7 @@ vini = [
     }
 ]
 
+# --- FUNZIONE RENDER SCHEDA (FLUSH LEFT) ---
 def render_wine_card(v):
     classe_esaurito = "out-of-stock-card" if v.get("esaurito") else ""
     label_esaurito = '<div class="out-of-stock-badge">❌ MOMENTANEAMENTE ESAURITO</div>' if v.get("esaurito") else ""
@@ -155,7 +158,7 @@ def render_wine_card(v):
 # =================================================================
 # 4. INTERFACCIA
 # =================================================================
-st.title("🍷 Wine Selector 2.3")
+st.title("🍷 Wine Selector")
 
 tab_sommelier, tab_carta = st.tabs(["🤖 IL TUO SOMMELIER", "📖 SFOGLIA LA CARTA"])
 
@@ -210,12 +213,21 @@ with tab_carta:
         st.error("Nessun vino trovato.")
         if st.button("🔄 AZZERA FILTRI"): st.rerun()
 
+# =================================================================
+# 5. TASTO HUB UNIVERSALE (FUORI DAI TAB)
+# =================================================================
+st.write("")
+st.write("---")
+st.markdown("<p style='text-align:center; font-size:13px; color:#888;'>Hai bisogno di altri strumenti?</p>", unsafe_allow_html=True)
+# Ho inserito il link alla tua stazione centrale
+st.link_button("🌐 VEDI TUTTE LE NOSTRE WEB APP", "https://app-comunicattivamente-center.streamlit.app/")
+
 # --- FOOTER ---
 st.divider()
-st.markdown("""
+st.markdown(f"""
 <div style="text-align: center; color: #888 !important; font-size: 14px;">
 Wine Selector 2.3 • Powered by 
-<a href="https://www.superstart.it" target="_blank" style="color: #b00000 !important; text-decoration: none; font-weight: bold;">SuPeR</a> 
+<a href="https://www.superstart.it" target="_blank" style="color: {ROSSO_BRAND} !important; text-decoration: none; font-weight: bold;">SuPeR</a> 
 & Streamlit
 </div>
 """, unsafe_allow_html=True)
